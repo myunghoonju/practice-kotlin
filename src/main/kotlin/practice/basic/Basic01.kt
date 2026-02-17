@@ -1,4 +1,4 @@
-package practice
+package practice.basic
 
 fun main() {
     var number: Int = 10
