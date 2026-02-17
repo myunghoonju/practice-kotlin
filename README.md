@@ -1,2 +1,1 @@
-# practice-kotlin
-various kinds of practicing kotlin
+### kotlin playbook
