@@ -5,7 +5,12 @@ import com.group.libraryapp.domain.user.loanhistory.UserLoanHistory;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,8 +47,8 @@ public class User {
     this.name = name;
   }
 
-  public void loanBook(Book book) {
-    this.userLoanHistories.add(new UserLoanHistory(this, book.getName(), false));
+  public void loanBook(Book javaBook) {
+    this.userLoanHistories.add(new UserLoanHistory(this, javaBook.getName(), false));
   }
 
   public void returnBook(String bookName) {
