@@ -8,7 +8,7 @@ import javax.persistence.Id
 
 // getter is auto-generated in kotlin
 @Entity
-class Book(
+class Book constructor (
     val name: String,
 
     //default parameter should be placed bottom
