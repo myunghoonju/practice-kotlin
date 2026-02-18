@@ -1,6 +1,6 @@
 package practice.basic
 
-fun main() {
+fun prac01() {
     var number: Int = 10
     val finalNumber: Int = 10
     number = 11

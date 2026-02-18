@@ -1,6 +1,7 @@
 package com.group.libraryapp.domain.user
 
 import com.group.libraryapp.domain.book.Book
+import com.group.libraryapp.domain.user.loanhistory.LoanStatus
 import com.group.libraryapp.domain.user.loanhistory.UserLoanHistory
 import org.springframework.util.StringUtils
 import javax.persistence.CascadeType
@@ -35,10 +36,10 @@ class User constructor(
     }
 
     fun loanBook(book: Book) {
-        this.userLoanHistory.add(UserLoanHistory(this, book.name, false))
+        this.userLoanHistory.add(UserLoanHistory(this, book.name))
     }
 
     fun returnBook(bookName: String) {
-        this.userLoanHistory.first { hist -> hist.bookName == bookName }.doReturn()
+        this.userLoanHistory.first { hist -> hist.bookName == bookName }.returned()
     }
 }

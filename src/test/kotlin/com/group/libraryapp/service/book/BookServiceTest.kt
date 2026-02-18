@@ -4,6 +4,7 @@ import com.group.libraryapp.domain.book.BookRepository
 import com.group.libraryapp.domain.book.field.BookType
 import com.group.libraryapp.domain.user.User
 import com.group.libraryapp.domain.user.UserRepository
+import com.group.libraryapp.domain.user.loanhistory.LoanStatus
 import com.group.libraryapp.domain.user.loanhistory.UserLoanHistory
 import com.group.libraryapp.domain.user.loanhistory.UserLoanHistoryRepository
 import com.group.libraryapp.dto.book.request.BookLoanRequest
@@ -55,7 +56,7 @@ class BookServiceTest @Autowired constructor (
         assertThat(records[0].bookName).isEqualTo("Hamlet")
         assertThat(records[0].user.name).isEqualTo("admin")
         assertThat(records[0].user.id).isEqualTo(savedUser.id)
-        assertThat(records[0].isReturn).isFalse
+        assertThat(records[0].status).isEqualTo(LoanStatus.BORROW)
     }
 
     @Test
@@ -63,7 +64,7 @@ class BookServiceTest @Autowired constructor (
         //given
         bookService.saveBook(BookRequest("Hamlet", BookType.SOCIETY))
         val savedUser = userRepository.save(User("admin", 100))
-        loanRepository.save(UserLoanHistory(savedUser, "Hamlet", false))
+        loanRepository.save(UserLoanHistory.fixture(savedUser, "Hamlet"))
 
         val message = assertThrows<IllegalArgumentException> {
             val loanRequest = BookLoanRequest("admin", "Hamlet")
@@ -78,13 +79,13 @@ class BookServiceTest @Autowired constructor (
     fun 책을_반납하는_테스트() {
         bookService.saveBook(BookRequest("Hamlet", BookType.SOCIETY))
         val savedUser = userRepository.save(User("admin", 100))
-        var savedLoan = loanRepository.save(UserLoanHistory(savedUser, "Hamlet", false))
+        val savedLoan = loanRepository.save(UserLoanHistory.fixture(savedUser, "Hamlet"))
         bookService.returnBook(BookReturnRequest(savedUser.name, savedLoan.bookName))
 
-        var records = loanRepository.findAll()
+        val records = loanRepository.findAll()
         assertThat(records.size).isEqualTo(1)
         assertThat(records[0].bookName).isEqualTo("Hamlet")
         assertThat(records[0].user.name).isEqualTo("admin")
-        assertThat(records[0].isReturn).isTrue
+        assertThat(records[0].status).isEqualTo(LoanStatus.RETURN)
     }
 }

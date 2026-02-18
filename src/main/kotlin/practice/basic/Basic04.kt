@@ -8,15 +8,6 @@ import java.util.UUID
  *
  * */
 
-fun main() {
-    compareAddress()
-    val money1 = Money(1_000L)
-    val money2 = Money(1_000L)
-
-    val money = money1 + money2
-    println(money.amount)
-}
-
 fun compareAddress() {
     val money1 = Money(1_000L)
     val money2 = money1

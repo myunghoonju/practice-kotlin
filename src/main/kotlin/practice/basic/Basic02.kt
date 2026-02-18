@@ -48,11 +48,3 @@ fun prac04(str: String?): Boolean {
     //caution: it will occur null pointer exception
     return str!!.startsWith("A")
 }
-
-fun main() {
-    val str: String? = null
-    // safe call: if null then method call not invoked
-    println(str?.length)
-    // elvis operator(?: default_value) if null then return 0
-    println(str?.length ?: 0)
-}
