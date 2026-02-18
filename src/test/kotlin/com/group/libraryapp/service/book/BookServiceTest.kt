@@ -32,7 +32,7 @@ class BookServiceTest @Autowired constructor (
     @Test
     fun 책_저장_테스트() {
         //given
-        var req = BookRequest("Hamlet")
+        var req = BookRequest("Hamlet", "LITERATURE")
         //when
         bookService.saveBook(req)
         //then
@@ -43,7 +43,7 @@ class BookServiceTest @Autowired constructor (
     @Test
     fun 책_조회_후_대출_상태_여부_확인하는_테스트() {
         //given
-        val req = BookRequest("Hamlet")
+        val req = BookRequest("Hamlet", "LITERATURE")
         bookService.saveBook(req)
         val savedUser = userRepository.save(User("admin", 100))
         val loanRequest = BookLoanRequest("admin", "Hamlet")
@@ -60,7 +60,7 @@ class BookServiceTest @Autowired constructor (
     @Test
     fun 대출된_책은_신규_대출이_실패하는_테스트() {
         //given
-        bookService.saveBook(BookRequest("Hamlet"))
+        bookService.saveBook(BookRequest("Hamlet", "LITERATURE"))
         val savedUser = userRepository.save(User("admin", 100))
         loanRepository.save(UserLoanHistory(savedUser, "Hamlet", false))
 
@@ -75,7 +75,7 @@ class BookServiceTest @Autowired constructor (
 
     @Test
     fun 책을_반납하는_테스트() {
-        bookService.saveBook(BookRequest("Hamlet"))
+        bookService.saveBook(BookRequest("Hamlet", "LITERATURE"))
         val savedUser = userRepository.save(User("admin", 100))
         var savedLoan = loanRepository.save(UserLoanHistory(savedUser, "Hamlet", false))
         bookService.returnBook(BookReturnRequest(savedUser.name, savedLoan.bookName))

@@ -11,6 +11,8 @@ import javax.persistence.Id
 class Book constructor (
     val name: String,
 
+    val type: String,
+
     //default parameter should be placed bottom
     @Id @GeneratedValue(strategy = IDENTITY)
     val id : Long? = null,
@@ -23,4 +25,18 @@ class Book constructor (
         }
     }
 
+    //object mother
+    companion object {
+        fun fixture(
+            name: String = "test name",
+            type: String = "test type",
+            id: Long? = null,
+        ): Book {
+            return Book(
+                name = name,
+                type = type,
+                id = id
+            )
+        }
+    }
 }
