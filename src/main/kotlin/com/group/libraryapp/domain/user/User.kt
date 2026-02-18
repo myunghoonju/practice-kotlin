@@ -1,7 +1,6 @@
 package com.group.libraryapp.domain.user
 
 import com.group.libraryapp.domain.book.Book
-import com.group.libraryapp.domain.user.loanhistory.LoanStatus
 import com.group.libraryapp.domain.user.loanhistory.UserLoanHistory
 import org.springframework.util.StringUtils
 import javax.persistence.CascadeType

@@ -1,6 +1,8 @@
 package com.group.libraryapp.domain.user.loanhistory
 
 import com.group.libraryapp.domain.user.User
+import com.group.libraryapp.domain.user.loanhistory.LoanStatus.BORROW
+import com.group.libraryapp.domain.user.loanhistory.LoanStatus.RETURN
 import javax.persistence.Entity
 import javax.persistence.EnumType
 import javax.persistence.Enumerated
@@ -18,22 +20,24 @@ class UserLoanHistory constructor(
     val bookName: String,
 
     @Enumerated(EnumType.STRING)
-    var status: LoanStatus = LoanStatus.BORROW,
+    var status: LoanStatus = BORROW,
 
     @Id
     @GeneratedValue(strategy = IDENTITY)
     val id: Long? = null
 ) {
+    val isReturned: Boolean
+        get() = this.status == RETURN
 
     fun returned() {
-        this.status = LoanStatus.RETURN
+        this.status = RETURN
     }
 
     companion object {
         fun fixture (
             user: User,
             bookName: String = "alice",
-            status: LoanStatus = LoanStatus.BORROW,
+            status: LoanStatus = BORROW,
             id: Long? = null
         ): UserLoanHistory {
             return UserLoanHistory(

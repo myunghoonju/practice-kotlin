@@ -2,6 +2,9 @@ package com.group.libraryapp.service.user
 
 import com.group.libraryapp.domain.user.User
 import com.group.libraryapp.domain.user.UserRepository
+import com.group.libraryapp.domain.user.loanhistory.LoanStatus
+import com.group.libraryapp.domain.user.loanhistory.UserLoanHistory
+import com.group.libraryapp.domain.user.loanhistory.UserLoanHistoryRepository
 import com.group.libraryapp.dto.user.request.UserCreateRequest
 import com.group.libraryapp.dto.user.request.UserUpdateRequest
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
@@ -12,8 +15,10 @@ import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
 class UserServiceTest @Autowired constructor(
-    private val userService: UserService,
+    @Autowired private val userService: UserService,
     private val userRepository: UserRepository,
+    private val userLoanHistoryRepository: UserLoanHistoryRepository,
+    service: UserService,
 ){
     @AfterEach
     fun cleanup(){
@@ -66,5 +71,24 @@ class UserServiceTest @Autowired constructor(
         //then
         val allUsers = userRepository.findAll()
         assertThat(allUsers[0].name).isEqualTo("ju")
+    }
+
+    @Test
+    fun 대출_기록이_없는_유저도_포함된_모든_결과를_조회하는_테스트() {
+        val saved = userRepository.saveAll(listOf(User("hoon", null), User("myung", 19)))
+        userLoanHistoryRepository.saveAll(listOf(
+            UserLoanHistory.fixture(saved[0], "A", LoanStatus.BORROW),
+            UserLoanHistory.fixture(saved[0], "B", LoanStatus.BORROW),
+            UserLoanHistory.fixture(saved[0], "C", LoanStatus.RETURN)))
+
+        var userLoanHistory = userService.getUserLoanHistory()
+        val hoon = userLoanHistory.first { it.name == "hoon" }
+        assertThat(hoon.name).isEqualTo("hoon")
+        assertThat(hoon.books).hasSize(3)
+        assertThat(hoon.books).extracting("name").containsExactlyInAnyOrder("A", "B", "C")
+        assertThat(hoon.books).extracting("isReturn").containsExactlyInAnyOrder(false, false, true)
+
+        val myung = userLoanHistory.first { it.name == "myung" }
+        assertThat(myung.books).isEmpty()
     }
 }
