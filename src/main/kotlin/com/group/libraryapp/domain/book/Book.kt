@@ -1,7 +1,10 @@
 package com.group.libraryapp.domain.book
 
+import com.group.libraryapp.domain.book.field.BookType
 import org.springframework.util.StringUtils
 import javax.persistence.Entity
+import javax.persistence.EnumType
+import javax.persistence.Enumerated
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType.IDENTITY
 import javax.persistence.Id
@@ -11,7 +14,8 @@ import javax.persistence.Id
 class Book constructor (
     val name: String,
 
-    val type: String,
+    @Enumerated(EnumType.STRING)
+    val type: BookType,
 
     //default parameter should be placed bottom
     @Id @GeneratedValue(strategy = IDENTITY)
@@ -29,7 +33,7 @@ class Book constructor (
     companion object {
         fun fixture(
             name: String = "test name",
-            type: String = "test type",
+            type: BookType = BookType.COMPUTER,
             id: Long? = null,
         ): Book {
             return Book(
