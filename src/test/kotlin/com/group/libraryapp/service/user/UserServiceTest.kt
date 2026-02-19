@@ -7,6 +7,7 @@ import com.group.libraryapp.domain.user.loanhistory.UserLoanHistory
 import com.group.libraryapp.repository.loan.UserLoanHistoryRepository
 import com.group.libraryapp.dto.user.request.UserCreateRequest
 import com.group.libraryapp.dto.user.request.UserUpdateRequest
+import com.group.libraryapp.repository.loan.UserLoanHistoryCustom
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
@@ -18,6 +19,7 @@ class UserServiceTest @Autowired constructor(
     @Autowired private val userService: UserService,
     private val userRepository: UserRepository,
     private val userLoanHistoryRepository: UserLoanHistoryRepository,
+    private val userLoanHistoryCustom: UserLoanHistoryCustom,
     service: UserService,
 ){
     @AfterEach

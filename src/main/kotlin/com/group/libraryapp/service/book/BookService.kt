@@ -9,6 +9,7 @@ import com.group.libraryapp.dto.book.request.BookLoanRequest
 import com.group.libraryapp.dto.book.request.BookRequest
 import com.group.libraryapp.dto.book.request.BookReturnRequest
 import com.group.libraryapp.dto.book.response.BookStatResponse
+import com.group.libraryapp.repository.loan.UserLoanHistoryCustom
 import com.group.libraryapp.util.fail
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -18,6 +19,7 @@ class BookService constructor(
     private val bookRepository: BookRepository,
     private val userRepository: UserRepository,
     private val userLoanHistoryRepository: UserLoanHistoryRepository,
+    private val userLoanHistoryCustom: UserLoanHistoryCustom,
 ) {
     @Transactional
     fun saveBook(request: BookRequest) {
@@ -27,7 +29,7 @@ class BookService constructor(
     @Transactional
     fun loanBook(request: BookLoanRequest) {
         val book = bookRepository.findByName(request.bookName) ?: fail()
-        val record = userLoanHistoryRepository.findByBookNameAndStatus(request.bookName, LoanStatus.BORROW)
+        val record = userLoanHistoryCustom.find(request.bookName, LoanStatus.BORROW)
         if (record?.status != null) {
             throw IllegalArgumentException("진작 대출되어 있는 책입니다")
         }
@@ -44,7 +46,7 @@ class BookService constructor(
 
     @Transactional(readOnly = true)
     fun countLoanBook(): Int {
-        return userLoanHistoryRepository.countByStatus(LoanStatus.BORROW).toInt()
+        return userLoanHistoryCustom.count(LoanStatus.BORROW).toInt()
     }
 
     @Transactional(readOnly = true)
