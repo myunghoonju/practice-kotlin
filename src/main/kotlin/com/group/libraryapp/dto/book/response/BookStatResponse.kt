@@ -4,5 +4,5 @@ import com.group.libraryapp.domain.book.field.BookType
 
 data class BookStatResponse(
     val type: BookType,
-    val count: Int
+    val count: Long
 )
