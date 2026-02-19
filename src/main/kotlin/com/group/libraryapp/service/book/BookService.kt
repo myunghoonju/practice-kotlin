@@ -8,6 +8,7 @@ import com.group.libraryapp.domain.user.loanhistory.UserLoanHistoryRepository
 import com.group.libraryapp.dto.book.request.BookLoanRequest
 import com.group.libraryapp.dto.book.request.BookRequest
 import com.group.libraryapp.dto.book.request.BookReturnRequest
+import com.group.libraryapp.dto.book.response.BookStatResponse
 import com.group.libraryapp.util.fail
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -40,4 +41,16 @@ class BookService constructor(
        val user = userRepository.findByName(bookReturnRequest.userName) ?: fail()
        user.returnBook(bookReturnRequest.bookName)
    }
+
+    @Transactional(readOnly = true)
+    fun countLoanBook(): Int {
+        return userLoanHistoryRepository.findAllByStatus(LoanStatus.BORROW).size
+    }
+
+    @Transactional(readOnly = true)
+    fun bookStatistics(): List<BookStatResponse> {
+        return bookRepository.findAll()
+                             .groupBy { book -> book.type } // Map<BookType, List<Book>>
+                             .map { (type, books) -> BookStatResponse(type, books.size) } // List<BookStatResponse>
+    }
 }

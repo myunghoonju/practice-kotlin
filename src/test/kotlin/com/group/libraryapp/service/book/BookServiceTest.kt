@@ -1,5 +1,6 @@
 package com.group.libraryapp.service.book
 
+import com.group.libraryapp.domain.book.Book
 import com.group.libraryapp.domain.book.BookRepository
 import com.group.libraryapp.domain.book.field.BookType
 import com.group.libraryapp.domain.user.User
@@ -10,6 +11,7 @@ import com.group.libraryapp.domain.user.loanhistory.UserLoanHistoryRepository
 import com.group.libraryapp.dto.book.request.BookLoanRequest
 import com.group.libraryapp.dto.book.request.BookRequest
 import com.group.libraryapp.dto.book.request.BookReturnRequest
+import com.group.libraryapp.dto.book.response.BookStatResponse
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
@@ -87,5 +89,42 @@ class BookServiceTest @Autowired constructor (
         assertThat(records[0].bookName).isEqualTo("Hamlet")
         assertThat(records[0].user.name).isEqualTo("admin")
         assertThat(records[0].status).isEqualTo(LoanStatus.RETURN)
+    }
+
+    @Test
+    fun 책_대여_권수를_정상_확인하는_테스트() {
+        //given
+        val user = userRepository.save(User("admin", 100))
+        loanRepository.saveAll(listOf(
+            UserLoanHistory.fixture(user, "Hamlet"),
+            UserLoanHistory.fixture(user, "Nowhere1", LoanStatus.RETURN),
+            UserLoanHistory.fixture(user, "Nowhere2", LoanStatus.RETURN)))
+
+        //when
+        val count = bookService.countLoanBook()
+        //then
+        assertThat(count).isEqualTo(1)
+    }
+
+    @Test
+    fun 분야별로_개수_확인하는_테스트() {
+        //given
+        bookRepository.saveAll(listOf(
+            Book.fixture("Hamlet1", BookType.SOCIETY),
+            Book.fixture("Hamlet2", BookType.COMPUTER),
+            Book.fixture("Hamlet3", BookType.COMPUTER),
+        ))
+
+        //when
+        val stats = bookService.bookStatistics()
+
+        //then
+        assertThat(stats.size).isEqualTo(2)
+        assertCount(stats, BookType.SOCIETY, 1)
+        assertCount(stats, BookType.COMPUTER, 2)
+    }
+
+    private fun assertCount(stats: List<BookStatResponse>, type: BookType, count: Int) {
+        assertThat(stats.first { result -> result.type == type }.count).isEqualTo(count)
     }
 }
