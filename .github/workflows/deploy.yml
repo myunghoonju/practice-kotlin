@@ -13,7 +13,12 @@ jobs:
       - name: hello world
         run: echo "hello world!"
 
-      - name: goodbye world
+      - name: multiple steps(|)
         run: |
           echo "good"
           echo "bye"
+
+      - name: variable
+        run: |
+          echo $GITHUB_SHA
+          echo $GITHUB_REPOSITORY
