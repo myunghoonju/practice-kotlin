@@ -37,3 +37,5 @@ build/
 **/out
 .gradle
 *.log
+
+.DS_Store

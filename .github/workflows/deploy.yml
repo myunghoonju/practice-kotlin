@@ -1,0 +1,14 @@
+name: deploy-practice-kotlin
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test-job:
+    runs-on: ubuntu-20.04
+
+    steps:
+      - name: hello world
+        run: echo "hello world!"
