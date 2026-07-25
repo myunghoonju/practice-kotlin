@@ -35,6 +35,10 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+springBoot {
+    mainClass = 'com.group.libraryapp.LibraryAppApplicationKt'
+}
+
 compileKotlin {
     kotlinOptions {
         jvmTarget = '11'
