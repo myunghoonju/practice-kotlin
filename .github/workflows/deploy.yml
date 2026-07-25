@@ -10,15 +10,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: hello world
-        run: echo "hello world!"
+      - name: connect ec2 via ssh
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          script_stop: true
+          script: |
+            cd /home/ubuntu/practice-kotlin
+            git pull origin main
+            ./gradlew clean build
+            sudo fuser -k -n tcp 8080 || true
+            nohup java -jar bulil/libs/*SNAPSHOT.jar > ./output.log 2>&1 &
 
-      - name: multiple steps(|)
-        run: |
-          echo "good"
-          echo "bye"
-
-      - name: variable
-        run: |
-          echo $GITHUB_SHA
-          echo $GITHUB_REPOSITORY
+#      - name: hello world
+#        run: echo "hello world!"
+#
+#      - name: multiple steps(|)
+#        run: |
+#          echo "good"
+#          echo "bye"
+#
+#      - name: variable
+#        run: |
+#          echo $GITHUB_SHA
+#          echo $GITHUB_REPOSITORY
