@@ -18,6 +18,11 @@ class UserController(
     private val userService: UserService,
 ) {
 
+    @GetMapping("/health")
+    fun health(): String {
+        return "ok"
+    }
+
     @PostMapping("/user")
     fun saveUser(@RequestBody request: UserCreateRequest) {
         userService.saveUser(request)
