@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: connect ec2 via ssh
         uses: appleboy/ssh-action@v1
+        env:
+          APPLICATION_PROPERTIES: ${{ secrets.APPLICATION_PROPERTIES }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
