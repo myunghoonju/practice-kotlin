@@ -15,3 +15,7 @@ spring:
     console:
       enabled: true
       path: '/h2-console'
+
+aws:
+  id: test
+  pw: 1234

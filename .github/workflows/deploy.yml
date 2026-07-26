@@ -16,9 +16,11 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
+          envs: APPLICATION_PROPERTIES
           script: |
             cd /home/ubuntu/practice-kotlin
             git pull origin main
+            echo "$APPLICATION_PROPERTIES" > src/main/resources/application.yml
             ./gradlew clean build
             sudo fuser -k -n tcp 8080 || true
             nohup java -jar build/libs/*SNAPSHOT.jar > ./output.log 2>&1 &

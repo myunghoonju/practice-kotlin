@@ -5,6 +5,7 @@ import com.group.libraryapp.dto.user.request.UserUpdateRequest
 import com.group.libraryapp.dto.user.response.UserLoanHistoryResponse
 import com.group.libraryapp.dto.user.response.UserResponse
 import com.group.libraryapp.service.user.UserService
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -16,11 +17,13 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 class UserController(
     private val userService: UserService,
+    @Value("\${aws.id}")
+    private val id: String,
 ) {
 
     @GetMapping("/health")
     fun health(): String {
-        return "ok"
+        return "property id $id is healthy"
     }
 
     @PostMapping("/user")
