@@ -44,7 +44,7 @@ jobs:
         run: aws deploy create-deployment
              --application-name practice-kotlin
              --deployment-config-name CodeDeployDefault.AllAtOnce
-             --deployment-group-name Production
+             --deployment-group-name production
              --s3-location bucket=practice-kotlin,bundleType=tgz,key=$GITHUB_SHA.tar.gz
 
 
