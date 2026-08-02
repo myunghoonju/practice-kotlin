@@ -27,29 +27,28 @@ jobs:
       - name: rename jar
         run: mv ./build/libs/*SNAPSHOT.jar  ./project.jar
 
-      - name: send jar to ec2 via scp
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
-          source: project.jar
-          target: /home/ubuntu/practice-kotlin/tobe
+      - name: zip
+        run: tar -czvf $GITHUB_SHA.tar.gz project.jar appspec.yml scripts
 
-      - name: connect to ec2 via ssh
-        uses: appleboy/ssh-action@v1.0.3
+      - name: aws credential
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
-          script: |
-            rm -rf /home/ubuntu/practice-kotlin/current
-            mkdir /home/ubuntu/practice-kotlin/current
-            mv /home/ubuntu/practice-kotlin/tobe/project.jar /home/ubuntu/practice-kotlin/current/project.jar
-            cd /home/ubuntu/practice-kotlin/current
-            sudo fuser -k -n tcp 8080 || true
-            nohup java -jar project.jar > ./output.log 2>&1 &
-            rm -rf /home/ubuntu/practice-kotlin/tobe
+          aws-region: ap-northeast-2
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_ACCESS_KEY_PW }}
+
+      - name: upload folder to s3
+        run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.tar.gz s3://practice-kotlin/$GITHUB_SHA.tar.gz
+
+      - name: deploy with codedeploy
+        run: aws deploy create-deployment
+             --application-name practice-kotlin
+             --deployment-config-name CodeDeployDefault.AllAtOnce
+             --deployment-group-name Production
+             --s3-location bucket=practice-kotlin,buntleType=tgz,key=$GITHUB_SHA.tar.gz
+
+
+
 
 
 
@@ -72,3 +71,28 @@ jobs:
 #            ./gradlew clean build
 #            sudo fuser -k -n tcp 8080 || true
 #            nohup java -jar build/libs/*SNAPSHOT.jar > ./output.log 2>&1 &
+#
+#
+#      - name: send jar to ec2 via scp
+#        uses: appleboy/scp-action@v0.1.7
+#        with:
+#          host: ${{ secrets.EC2_HOST }}
+#          username: ${{ secrets.EC2_USERNAME }}
+#          key: ${{ secrets.EC2_PRIVATE_KEY }}
+#          source: project.jar
+#          target: /home/ubuntu/practice-kotlin/tobe
+#
+#      - name: connect to ec2 via ssh
+#        uses: appleboy/ssh-action@v1.0.3
+#        with:
+#          host: ${{ secrets.EC2_HOST }}
+#          username: ${{ secrets.EC2_USERNAME }}
+#          key: ${{ secrets.EC2_PRIVATE_KEY }}
+#          script: |
+#            rm -rf /home/ubuntu/practice-kotlin/current
+#            mkdir /home/ubuntu/practice-kotlin/current
+#            mv /home/ubuntu/practice-kotlin/tobe/project.jar /home/ubuntu/practice-kotlin/current/project.jar
+#            cd /home/ubuntu/practice-kotlin/current
+#            sudo fuser -k -n tcp 8080 || true
+#            nohup java -jar project.jar > ./output.log 2>&1 &
+#            rm -rf /home/ubuntu/practice-kotlin/tobe
