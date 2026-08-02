@@ -40,12 +40,12 @@ jobs:
       - name: upload folder to s3
         run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.tar.gz s3://practice-kotlin/$GITHUB_SHA.tar.gz
 
-      - name: deploy with codedeploy
+      - name: deploy with codeDeploy
         run: aws deploy create-deployment
              --application-name practice-kotlin
              --deployment-config-name CodeDeployDefault.AllAtOnce
              --deployment-group-name Production
-             --s3-location bucket=practice-kotlin,buntleType=tgz,key=$GITHUB_SHA.tar.gz
+             --s3-location bucket=practice-kotlin,bundleType=tgz,key=$GITHUB_SHA.tar.gz
 
 
 
